@@ -1,4 +1,10 @@
 #include <iostream>
+#include <chrono>
+
+
+
+
+
 
 /**
  * Checks if the RNA sequence is valid.
@@ -13,6 +19,21 @@ bool isValidSequence(const std::string &rna) {
   }
   return true;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Creates a 2D array for storing the optimum/maximum number of pairings
@@ -33,6 +54,23 @@ int **createOpt(int n) {
   return opt;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Creates a 2D array to keep track of which pairs have been visited.
  *
@@ -49,6 +87,21 @@ bool **createVisited(int n) {
   }
   return visited;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Creates a 2D array to keep track of which pairs have been included in the
@@ -69,6 +122,19 @@ std::string **createPairHolder(int n) {
   return base_pairs;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Checks if two base pairs are compatible.
  *
@@ -83,6 +149,26 @@ bool isBasePair(char x, char y) {
   else
     return false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Calculates the optimum value for each pair.
@@ -150,6 +236,25 @@ int calculateOpt(int **opt, int i, int j, int n, const std::string &rna,
   return std::max(x, y);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main() {
   std::cout << "Enter RNA sequence:" << std::endl;
   std::string rna;
@@ -165,19 +270,18 @@ int main() {
 
   // Case: Can't form a secondary structure
   if (n < 5) {
-    std::cout << "<Too small to form a secondary structure>";
+    std::cout << "<Too small to form a secondary structure>\n";
     return 0;
   }
-
   // Case: if the RNA length is 5
   if (n == 5) {
     if (isBasePair(rna[0], rna[n - 1])) {
-      std::cout << "1 secondary structure";
-      return 0;
+      std::cout << "1 secondary structure (0," << n-1 << ")";
     } else {
       std::cout << "No secondary structure";
-      return 0;
     }
+    std::cout << std::endl;
+    return 0;
   }
 
   // Create necessary array
@@ -185,6 +289,9 @@ int main() {
   bool **visited = createVisited(n);
   std::string **base_pairs = createPairHolder(n);
 
+
+  auto start = std::chrono::high_resolution_clock::now();
+  
   // RNA secondary struture prediction algorithm
   int j;
   for (int k = 5; k < n; k++) {
@@ -204,11 +311,14 @@ int main() {
         max_matches_j = j;
       }
   }
-
+  
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time taken : " << duration.count() << "ms" << std::endl;
   // Printing result
   std::cout << "Maximum number of pairings: "
             << opt[max_matches_i][max_matches_j] << std::endl;
-  std::cout << "The base pairs: " << base_pairs[max_matches_j][max_matches_j]
+  std::cout << "The base pairs: " << base_pairs[max_matches_i][max_matches_j]
             << std::endl;
 
   return 0;
